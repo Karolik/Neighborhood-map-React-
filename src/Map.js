@@ -16,8 +16,7 @@ export default class Map extends Component {
     query: '',
     infoWindow: new this.props.google.maps.InfoWindow(),
     bounds: new this.props.google.maps.LatLngBounds(),
-    defaultIcon: () => {this.makeMarkerIcon('0091ff')},
-    highlightedIcon: () => {this.makeMarkerIcon('FFFF24')}
+    highlightedIcon: false
   }
 
   componentDidMount() {
@@ -50,21 +49,36 @@ export default class Map extends Component {
     renderMarkers() {
       const {google} = this.props
       const {infowindow, locations, markers} = this.state
+      const highlightedIcon = this.makeMarkerIcon('FFFF24')
+      const defaultIcon = this.makeMarkerIcon('0091ff')
 
       locations.forEach((location, i) => {
         const marker = new google.maps.Marker({
           position: {lat: location.location.lat, lng: location.location.lng},
           map: this.map,
-          title: location.title
+          icon: defaultIcon,
+          title: location.title,
+          id: i
         })
         // Push the marker to the array of markers.
         markers.push(marker);
         this.setState({markers});
         console.log(markers);
-
+        /*this.setState((state) => ({
+          markers: [...state.markers, marker]
+        }))*/
+        // Create an onclick event to open the large infowindow at each marker.
         marker.addListener('click', () => {
           this.populateInfoWindow(marker, infowindow)
         })
+        // Two event listeners - one for mouseover, one for mouseout,
+        // to change the colors back and forth.
+        marker.addListener('mouseover', function() {
+          this.setIcon(highlightedIcon);
+        });
+        marker.addListener('mouseout', function() {
+          this.setIcon(defaultIcon);
+        });
 
         this.state.bounds.extend(marker.position);
       })
@@ -86,7 +100,7 @@ export default class Map extends Component {
         });
       }
     }
-    
+
     makeMarkerIcon = (markerColor) => {
       const {google} = this.props
       let markerImage = new google.maps.MarkerImage(
