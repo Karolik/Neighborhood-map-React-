@@ -71,49 +71,6 @@ export default class Map extends Component {
     this.map.fitBounds(this.state.bounds);
     }
 
-      // Style the markers a bit. This will be our listing marker icon.
-      //var defaultIcon = makeMarkerIcon('0091ff');
-      
-      // Create a "highlighted location" marker color for when the user
-      // mouses over the marker.
-      //var highlightedIcon = makeMarkerIcon('FFFF24');
-
-      // The following group uses the location array to create an array of markers on initialize.
-     /* for (let i = 0; i < locations.length; i++) {
-        // Get the position from the location array.
-        //var position = locations[i].location;
-        //var position = {lat: locations[i].location.lat, lng: locations[i].location.lng}
-        //var title = locations[i].title;
-        // Create a marker per location, and put into markers array.
-        const marker = new google.maps.Marker({
-          //position: position,
-          position: {lat: locations[i].location.lat, lng: locations[i].location.lng},
-          title: locations[i].title,
-          map: this.map,
-          //animation: google.maps.Animation.DROP,
-          //icon: defaultIcon,
-          id: i
-        })
-        // Push the marker to our array of markers.
-        this.state.markers.push(marker);
-        this.setState((state) => ({
-          markers: [...state.markers, marker]
-        }))
-        // Create an onclick event to open the large infowindow at each marker.
-       /* marker.addListener('click', function() {
-          this.populateInfoWindow(this, infowindow);
-        });*/
-        // Two event listeners - one for mouseover, one for mouseout,
-        // to change the colors back and forth.
-        /*marker.addListener('mouseover', function() {
-          this.setIcon(highlightedIcon);
-        });*/
-        /*marker.addListener('mouseout', function() {
-          this.setIcon(defaultIcon);
-        }); 
-      }
-      }*/
-
     populateInfoWindow = (marker, infowindow) => {
       const {markers} = this.state;
       //let infowindow = this.state;
@@ -143,7 +100,3 @@ export default class Map extends Component {
     )
   }
 }
-
-/*export default GoogleApiWrapper({
-  apiKey: 'AIzaSyDs0VIWSmdG3BZnOiBxOWz4SVqQF0t7QmQ'
-})(App) */
