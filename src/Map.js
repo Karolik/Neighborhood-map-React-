@@ -46,10 +46,8 @@ export default class Map extends Component {
   }
 
     renderMarkers() {
-      let {google} = this.props
-      let {infowindow} = this.state
-      let {locations} = this.state
-      let {markers} = this.state
+      const {google} = this.props
+      const {infowindow, locations, markers} = this.state
 
       locations.forEach((location, i) => {
         const marker = new google.maps.Marker({
@@ -73,7 +71,7 @@ export default class Map extends Component {
     }
 
     populateInfoWindow = (marker, infowindow) => {
-      const {markers} = this.state;
+      //const {markers} = this.state;
       //let infowindow = this.state;
       // Check to make sure the infowindow is not already opened on this marker.
       if (infowindow.marker !== marker) {  
