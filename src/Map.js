@@ -15,7 +15,9 @@ export default class Map extends Component {
     markers: [],
     query: '',
     infoWindow: new this.props.google.maps.InfoWindow(),
-    bounds: new this.props.google.maps.LatLngBounds()
+    bounds: new this.props.google.maps.LatLngBounds(),
+    defaultIcon: () => {this.makeMarkerIcon('0091ff')},
+    highlightedIcon: () => {this.makeMarkerIcon('FFFF24')}
   }
 
   componentDidMount() {
