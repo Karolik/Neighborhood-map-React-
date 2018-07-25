@@ -60,6 +60,7 @@ export default class Map extends Component {
         // Push the marker to the array of markers.
         markers.push(marker);
         this.setState({markers});
+        console.log(markers);
 
         marker.addListener('click', () => {
           this.populateInfoWindow(marker, infowindow)
