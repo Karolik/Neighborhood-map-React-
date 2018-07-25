@@ -64,15 +64,11 @@ export default class Map extends Component {
         markers.push(marker);
         this.setState({markers});
         console.log(markers);
-        /*this.setState((state) => ({
-          markers: [...state.markers, marker]
-        }))*/
-        // Create an onclick event to open the large infowindow at each marker.
+        // Create an onclick event to open an infowindow at each marker.
         marker.addListener('click', () => {
           this.populateInfoWindow(marker, infowindow)
         })
-        // Two event listeners - one for mouseover, one for mouseout,
-        // to change the colors back and forth.
+        // Two event listeners - one for mouseover, one for mouseout, to change the colors back and forth.
         marker.addListener('mouseover', function() {
           this.setIcon(highlightedIcon);
         });
