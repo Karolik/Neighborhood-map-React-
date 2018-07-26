@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
-import ReactDOM from 'react-dom'
+//import ReactDOM from 'react-dom'
+import scriptLoader from 'react-async-script-loader'
 
 
-export default class Map extends Component {
+class Map extends Component {
 
   state = {
     locations: [
@@ -14,102 +15,52 @@ export default class Map extends Component {
     ],
     markers: [],
     query: '',
-    infoWindow: new this.props.google.maps.InfoWindow(),
-    bounds: new this.props.google.maps.LatLngBounds(),
-    highlightedIcon: false
+    //infoWindow: new this.props.google.maps.InfoWindow(),
+    //bounds: new this.props.google.maps.LatLngBounds(),
+    //highlightedIcon: false
   }
 
-  componentDidMount() {
-    this.initMap();
-  }
-
-  initMap() {
-    if (this.props && this.props.google) {
-      // google is available
-      const {google} = this.props;
-      const maps = google.maps;
-
-      const mapRef = this.refs.map;
-      const node = ReactDOM.findDOMNode(mapRef);
-
-      let zoom = 15;
-      let lat = 48.804546;
-      let lng = 2.127116;
-      const center = new maps.LatLng(lat, lng);
-      const mapConfig = Object.assign({}, {
-        center: center,
-        zoom: zoom,
-        mapTypeId: 'roadmap'
+  componentWillReceiveProps({isScriptLoadSucceed}) {
+    if (isScriptLoadSucceed) {
+      const map = new window.google.maps.Map(document.getElementById('map'), {
+      zoom: 16,
+      center: {lat: 48.804546, lng: 2.127116},
       })
-      this.map = new maps.Map(node, mapConfig) 
-      this.renderMarkers()
+      this.renderMarkers();
+    }
+    else this.props.onError()
+  }
+
+ /* componentDidMount () {
+    const { isScriptLoadSucceed } = this.props
+    if (isScriptLoadSucceed) {
+      this.renderMarkers();
+    }
+  }*/
+
+  renderMarkers() {
+    //const {google} = this.props
+    const {locations, markers} = this.state
+
+    for (let i = 0; i < locations.length; i++) {
+      var position = locations[i].location;
+      // Create a marker per location, and put into markers array.
+      const marker = new window.google.maps.Marker({
+        position: {lat: locations[i].location.lat, lng: locations[i].location.lng},
+        //position: position,
+        title: locations[i].title,
+        map: this.map,
+        id: i
+      })
+      // Push the marker to our array of markers.
+      markers.push(marker);
+      this.setState({markers});
+      console.log(markers);
+
     }
   }
 
-    renderMarkers() {
-      const {google} = this.props
-      const {infowindow, locations, markers} = this.state
-      const highlightedIcon = this.makeMarkerIcon('FFFF24')
-      const defaultIcon = this.makeMarkerIcon('0091ff')
-
-      locations.forEach((location, i) => {
-        const marker = new google.maps.Marker({
-          position: {lat: location.location.lat, lng: location.location.lng},
-          map: this.map,
-          icon: defaultIcon,
-          title: location.title,
-          id: i
-        })
-        // Push the marker to the array of markers.
-        markers.push(marker);
-        this.setState({markers});
-        console.log(markers);
-        // Create an onclick event to open an infowindow at each marker.
-        marker.addListener('click', () => {
-          this.populateInfoWindow(marker, infowindow)
-        })
-        // Two event listeners - one for mouseover, one for mouseout, to change the colors back and forth.
-        marker.addListener('mouseover', function() {
-          this.setIcon(highlightedIcon);
-        });
-        marker.addListener('mouseout', function() {
-          this.setIcon(defaultIcon);
-        });
-
-        this.state.bounds.extend(marker.position);
-      })
-    // Extend the boundaries of the map for each marker
-    this.map.fitBounds(this.state.bounds);
-    }
-
-    populateInfoWindow = (marker, infowindow) => {
-      //const {markers} = this.state;
-      //let infowindow = this.state;
-      // Check to make sure the infowindow is not already opened on this marker.
-      if (infowindow.marker !== marker) {  
-        infowindow.marker = marker;
-        infowindow.setContent('<div>' + marker.title + '</div>');
-        infowindow.open(this.map, marker);
-        // Make sure the marker property is cleared if the infowindow is closed.
-        infowindow.addListener('closeclick', function() {
-          infowindow.marker = null;
-        });
-      }
-    }
-
-    makeMarkerIcon = (markerColor) => {
-      const {google} = this.props
-      let markerImage = new google.maps.MarkerImage(
-        'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
-        '|40|_|%E2%80%A2',
-        new google.maps.Size(21, 34),
-        new google.maps.Point(0, 0),
-        new google.maps.Point(10, 34),
-        new google.maps.Size(21,34));
-      return markerImage;
-    }
-
-  render() {
+ render() {
     return(
       <div>
         <div className="container">
@@ -122,3 +73,7 @@ export default class Map extends Component {
     )
   }
 }
+
+export default scriptLoader(
+  [`https://maps.googleapis.com/maps/api/js?key=AIzaSyDs0VIWSmdG3BZnOiBxOWz4SVqQF0t7QmQ`]
+)(Map);
