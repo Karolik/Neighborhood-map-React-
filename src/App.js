@@ -1,5 +1,5 @@
 import React from 'react';
-import { GoogleApiWrapper } from 'google-maps-react'
+//import { GoogleApiWrapper } from 'google-maps-react'
 import './App.css'
 import Map from './Map'
 
@@ -12,9 +12,8 @@ function MapsApp(props) {
     )
   }
 
-export default GoogleApiWrapper({
+/*export default GoogleApiWrapper({
   apiKey: 'AIzaSyDs0VIWSmdG3BZnOiBxOWz4SVqQF0t7QmQ'
-})(MapsApp)
+})(MapsApp)*/
 
-
-//export default App;
+export default MapsApp;
