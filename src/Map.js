@@ -26,7 +26,7 @@ class Map extends Component {
       zoom: 16,
       center: {lat: 48.804546, lng: 2.127116},
       })
-      this.renderMarkers();
+      this.renderMarkers(map);
     }
     else this.props.onError()
   }
@@ -38,7 +38,7 @@ class Map extends Component {
     }
   }*/
 
-  renderMarkers() {
+  renderMarkers = () => {
     //const {google} = this.props
     const {locations, markers} = this.state
 
