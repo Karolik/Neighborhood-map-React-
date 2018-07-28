@@ -38,7 +38,7 @@ class Map extends Component {
     }
   }*/
 
-  renderMarkers = () => {
+  renderMarkers = (map) => {
     //const {google} = this.props
     const {locations, markers} = this.state
 
