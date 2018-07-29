@@ -14,7 +14,7 @@ class Map extends Component {
       {title: 'Cinema Cyrano', location: {lat: 48.808210, lng: 2.131097}}
     ],
     markers: [],
-    query: '',
+    query: ''
     //infoWindow: new this.props.google.maps.InfoWindow(),
     //bounds: new this.props.google.maps.LatLngBounds(),
     //highlightedIcon: false
