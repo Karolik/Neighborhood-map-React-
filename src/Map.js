@@ -49,7 +49,7 @@ class Map extends Component {
         position: {lat: locations[i].location.lat, lng: locations[i].location.lng},
         //position: position,
         title: locations[i].title,
-        map: this.map,
+        map: map,
         id: i
       })
       // Push the marker to our array of markers.
