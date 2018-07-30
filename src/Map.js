@@ -132,7 +132,7 @@ class Map extends Component {
       const match = new RegExp(escapeRegExp(query), 'i')
       showingPlaces = markers.filter((marker) => match.test(marker.title));
 
-      if(markers[i].title.includes(query)){
+      if(markers[i].title.toLowerCase().includes(query.toLowerCase())){
         markers[i].setVisible(true)
       }
       else {
