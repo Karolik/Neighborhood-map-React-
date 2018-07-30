@@ -116,17 +116,36 @@ class Map extends Component {
     this.setState({ query: '' })
   }
 
+  // This function will loop through the listings and hide them all.
+  hideMarkers = (markers) => {
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(null);
+    }
+  }
+
   render() {
     const {locations, markers, query} = this.state;
 
     let showingPlaces
     if (query) {
+      for (let i = 0; i < locations.length; i++) {
       const match = new RegExp(escapeRegExp(query), 'i')
-      showingPlaces = markers.filter((marker) => match.test(marker.title))
-    } else {
-      showingPlaces = markers
-    }
+      showingPlaces = markers.filter((marker) => match.test(marker.title));
 
+      if(markers[i].title.includes(query)){
+        markers[i].setVisible(true)
+      }
+      else {
+        markers[i].setVisible(false)
+      }
+      
+    } 
+  } else {
+    for (let i = 0; i < locations.length; i++) {
+      showingPlaces = markers
+      //markers[i].setVisible(true)
+      }
+    }
 
     return(
       <div>
