@@ -27,8 +27,16 @@
   to { transform: rotate(360deg); }
 }
 
+.app {
+  background: #646363;
+  color: #ebebeb;
+}
+
 .title {
   text-align: center;
+  background: #646363;
+  color: #ebebeb;
+  font-family: Helvetica, sans-serif, Arial;
 }
 
 .container {
@@ -44,10 +52,28 @@
 .textBox{
   height: 100vh;
   width: 15%;
-  background: #fff;
+  background: #646363;
+  color: #ebebeb;
   border: 1px solid #999;
   border-radius: 3px;
   line-height: 35px;
   padding: 10px 10px 30px 10px;
   text-align: left;
+}
+
+.search {
+  width: 100%;
+}
+
+.textBox ul {
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.textBox li {
+  width: 100%;
+  border: 1px solid #999;
+  padding: 6px 0;
+  line-height: 1.6em;
 }
