@@ -35,7 +35,7 @@ class Map extends Component {
     client_secret: '4SATNABB4YRB5CECKTU5V1OIBQH0QYKTMIWZ1C2FKUP5JDJG', //Client Secret obtained by getting developer access
     limit: 100, //The max number of venues to load
     query: 'Pubs', //The type of venues we want to query 'Pubs'
-    v: '20130619', //The version of the API.
+    v: '20180801', //The version of the API.
     ll: '51.5073,0.1276' //The latitude and longitude of Charing Cross, London
   };
 
