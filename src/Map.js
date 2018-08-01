@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 //import ReactDOM from 'react-dom'
 import scriptLoader from 'react-async-script-loader'
 import escapeRegExp from 'escape-string-regexp'
+import { Venue } from './Venue'
 
 
 class Map extends Component {
@@ -16,10 +17,42 @@ class Map extends Component {
     ],
     markers: [],
     query: '',
+    map: '',
     //highlightedIcon: false
+    venues: []
   }
 
-  componentWillReceiveProps({isScriptLoadSucceed}) {
+  componentDidMount() {
+  this.getVenues();
+  }
+
+  getVenues() {
+  let setVenueState = this.setState.bind(this);
+  const venuesEndpoint = 'https://api.foursquare.com/v2/venues/explore?';
+
+  const params = {
+    client_id: 'NTYCPUV20MOOHIOHYXF3ZZ2A2EZVZ1RSHXKWFELIJBP5HNLC', //Client ID obtained by getting developer access
+    client_secret: '4SATNABB4YRB5CECKTU5V1OIBQH0QYKTMIWZ1C2FKUP5JDJG', //Client Secret obtained by getting developer access
+    limit: 100, //The max number of venues to load
+    query: 'Pubs', //The type of venues we want to query 'Pubs'
+    v: '20130619', //The version of the API.
+    ll: '51.5073,0.1276' //The latitude and longitude of Charing Cross, London
+  };
+
+  /*fetch(venuesEndpoint + new URLSearchParams(params), {
+      method: 'GET'
+    }).then(response => response.json()).then(response => {
+      this.setState({venues: response.response.groups[0].items}); //Set the components state
+    });*/
+
+  fetch(venuesEndpoint + new URLSearchParams(params), {
+  method: 'GET'
+  }).then(response => response.json()).then(response => {
+  setVenueState({venues: response.response.groups[0].items});
+  });
+  }
+
+  /*componentWillReceiveProps({isScriptLoadSucceed}) {
     if (isScriptLoadSucceed) {
       const map = new window.google.maps.Map(document.getElementById('map'), {
       zoom: 16,
@@ -28,15 +61,9 @@ class Map extends Component {
       this.renderMarkers(map);
       this.displayInfo();
     }
-    else this.props.onError()
-  }
-
-  componentDidMount () {
-    const { isScriptLoadSucceed } = this.props
-    if (isScriptLoadSucceed) {
-      this.renderMarkers();
-    }
-  }
+    //else 
+      //this.props.onError()
+  }*/
 
   renderMarkers= (map) => {
     const {locations, markers} = this.state
@@ -59,6 +86,9 @@ class Map extends Component {
       this.setState({markers});
       console.log(markers);
 
+      /** Placeholder for foursquare response
+	  	//marker.foursquareData = null;	 */
+
       // Create an onclick event to open an infowindow at each marker.
       marker.addListener('click', () => {
         this.populateInfoWindow(marker, infowindow);
@@ -74,6 +104,10 @@ class Map extends Component {
     //const {markers} = this.state;
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker !== marker) {
+      marker.setAnimation(window.google.maps.Animation.BOUNCE);
+			setTimeout(function(){
+			  marker.setAnimation(null); 
+			}, 200);
       infowindow.marker = marker;
       infowindow.setContent('<div>' + marker.title + '</div>');
       infowindow.open(this.map, marker);
@@ -83,17 +117,27 @@ class Map extends Component {
       })
     }
   }
+
   //When clicked on a place on the list, display an infowindow
   displayInfo = () => {
     const {markers} = this.state
     const infowindow = new window.google.maps.InfoWindow();
     const that = this
     const place = document.querySelector(".listView")
+  
+    if(infowindow){
+      infowindow.close();
+      place.addEventListener('click', function(event){
+        const index = markers.findIndex(marker => (marker.title === event.target.innerHTML))
+        //Check if another infowindow is open and close it
+        //... ???
+        if(infowindow){
+          infowindow.close();
+        }
+          that.populateInfoWindow(markers[index], infowindow)
 
-    place.addEventListener('click', function(event){
-      const index = markers.findIndex(marker => (marker.title === event.target.innerHTML))
-      that.populateInfoWindow(markers[index], infowindow)
-    })
+      })
+    }
   }
 
   makeMarkerIcon = (markerColor) => {
@@ -123,7 +167,21 @@ class Map extends Component {
     }
   }
 
-  render() {
+render() {
+  
+    var venueList = this.state.venues.map((item,i) =>
+      <Venue key={i} name={item.venue.name}/> //Create a new "name attribute"
+    );
+  
+    return (
+      <ul>
+        {venueList}
+      </ul>
+    );
+  }
+}
+
+  /*render() {
     const {locations, markers, query} = this.state;
 
     let showingPlaces
@@ -137,13 +195,20 @@ class Map extends Component {
       }
       else {
         markers[i].setVisible(false)
-      }
       
+
+        //if (infowindow.marker === markers[i]) {
+          // close the info window if marker removed
+          //infowindow.close()
+        //}
+      }
     } 
   } else {
-    for (let i = 0; i < locations.length; i++) {
+    for (var i = 0; i < locations.length; i++) {
       showingPlaces = markers
-      //markers[i].setVisible(true)
+        if(markers[i]){
+          markers[i].setVisible(true)
+        }
       }
     }
 
@@ -151,7 +216,7 @@ class Map extends Component {
       <div>
         <div className="container">
           <div className="textBox">
-            <input role="search" type='text'
+            <input className="search" role="search" type='text'
             value={query}
             onChange={(event) => this.updateQuery(event.target.value)}
             />
@@ -167,7 +232,7 @@ class Map extends Component {
       </div>
     )
   }
-}
+} */
 
 export default scriptLoader(
   [`https://maps.googleapis.com/maps/api/js?key=AIzaSyDs0VIWSmdG3BZnOiBxOWz4SVqQF0t7QmQ`]
