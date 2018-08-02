@@ -31,28 +31,35 @@ class Map extends Component {
   const venuesEndpoint = 'https://api.foursquare.com/v2/venues/explore?';
 
   const params = {
-    client_id: 'NTYCPUV20MOOHIOHYXF3ZZ2A2EZVZ1RSHXKWFELIJBP5HNLC', //Client ID obtained by getting developer access
-    client_secret: '4SATNABB4YRB5CECKTU5V1OIBQH0QYKTMIWZ1C2FKUP5JDJG', //Client Secret obtained by getting developer access
-    limit: 100, //The max number of venues to load
-    query: 'Pubs', //The type of venues we want to query 'Pubs'
-    v: '20180801', //The version of the API.
-    ll: '51.5073,0.1276' //The latitude and longitude of Charing Cross, London
+    client_id: 'NTYCPUV20MOOHIOHYXF3ZZ2A2EZVZ1RSHXKWFELIJBP5HNLC',
+    client_secret: '4SATNABB4YRB5CECKTU5V1OIBQH0QYKTMIWZ1C2FKUP5JDJG',
+    ll: '48.804546,2.127116', //The latitude and longitude of Notre Dame, Versailles
+    limit: 3, //The max number of venues to load
+    section: 'sights',
+    //query: 'Pubs', //The type of venues we want to query 'Pubs'
+    v: '20180801' //The version of the API.
   };
 
+    fetch(venuesEndpoint + new URLSearchParams(params), {
+      method: 'GET'
+    }).then(response => response.json()).then(response => {
+      setVenueState({venues: response.response.groups[0].items});
+    });
+
   /*fetch(venuesEndpoint + new URLSearchParams(params), {
+  method: 'GET'
+  }).then(response => {
+    //console.log(response)
+  });*/
+
+    /*fetch(venuesEndpoint + new URLSearchParams(params), {
       method: 'GET'
     }).then(response => response.json()).then(response => {
       this.setState({venues: response.response.groups[0].items}); //Set the components state
     });*/
-
-  fetch(venuesEndpoint + new URLSearchParams(params), {
-  method: 'GET'
-  }).then(response => response.json()).then(response => {
-  setVenueState({venues: response.response.groups[0].items});
-  });
   }
 
-  /*componentWillReceiveProps({isScriptLoadSucceed}) {
+  componentWillReceiveProps({isScriptLoadSucceed}) {
     if (isScriptLoadSucceed) {
       const map = new window.google.maps.Map(document.getElementById('map'), {
       zoom: 16,
@@ -63,7 +70,7 @@ class Map extends Component {
     }
     //else 
       //this.props.onError()
-  }*/
+  }
 
   renderMarkers= (map) => {
     const {locations, markers} = this.state
@@ -167,21 +174,14 @@ class Map extends Component {
     }
   }
 
-render() {
-  
-    var venueList = this.state.venues.map((item,i) =>
-      <Venue key={i} name={item.venue.name}/> //Create a new "name attribute"
-    );
-  
-    return (
-      <ul>
-        {venueList}
-      </ul>
-    );
-  }
-}
+  render() {
 
-  /*render() {
+    const venueList = this.state.venues.map((item,i) =>
+      <Venue key={i} 
+      name={item.venue.name}
+      location={item.venue.location.address}/> //Create a new "name attribute"
+    );
+
     const {locations, markers, query} = this.state;
 
     let showingPlaces
@@ -196,7 +196,6 @@ render() {
       else {
         markers[i].setVisible(false)
       
-
         //if (infowindow.marker === markers[i]) {
           // close the info window if marker removed
           //infowindow.close()
@@ -223,6 +222,7 @@ render() {
             <ul className="listView">
               {showingPlaces.map((marker, i) =>(<li key={i}>{marker.title}</li>)
                 )}
+                {venueList}
               </ul>
           </div>
           <div id="map" role="application" ref="map">
@@ -232,7 +232,7 @@ render() {
       </div>
     )
   }
-} */
+}
 
 export default scriptLoader(
   [`https://maps.googleapis.com/maps/api/js?key=AIzaSyDs0VIWSmdG3BZnOiBxOWz4SVqQF0t7QmQ`]
