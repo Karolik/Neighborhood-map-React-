@@ -1,10 +1,11 @@
-import React from 'react';
-export const Venue = ({ name }) => <li>{name}</li>;
+import React, { Component } from 'react';
+import 'whatwg-fetch';
 
-/*
-render() {
-
-  return <li>{this.props.name}</li> //pass the name through
-
+export class Venue extends Component {
+  
+  render() {
+    return (
+      <li>{this.props.name} {this.props.location}</li>
+    )
+  }
 }
-*/
