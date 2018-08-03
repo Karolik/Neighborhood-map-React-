@@ -8,13 +8,13 @@ import { Venue } from './Venue'
 class Map extends Component {
 
   state = {
-    locations: [
+    /*locations: [
       {title: 'Versailles Palace', location: {lat: 48.804865, lng: 2.120355}},
       {title: 'Church of Notre-Dame', location: {lat: 48.807542, lng: 2.128779}},
       {title: 'Notre Dame Market', location: {lat: 48.806546, lng: 2.132030}},
       {title: 'Italian Restaurant', location: {lat: 48.807963, lng: 2.131558}},
       {title: 'Cinema Cyrano', location: {lat: 48.808210, lng: 2.131097}}
-    ],
+    ],*/
     markers: [],
     query: '',
     map: '',
@@ -34,8 +34,8 @@ class Map extends Component {
     client_id: 'NTYCPUV20MOOHIOHYXF3ZZ2A2EZVZ1RSHXKWFELIJBP5HNLC',
     client_secret: '4SATNABB4YRB5CECKTU5V1OIBQH0QYKTMIWZ1C2FKUP5JDJG',
     ll: '48.804546,2.127116', //The latitude and longitude of Notre Dame, Versailles
-    limit: 3, //The max number of venues to load
-    section: 'sights',
+    limit: 6, //The max number of venues to load
+    section: 'topPicks',//or 'sights'
     //query: 'Pubs', //The type of venues we want to query 'Pubs'
     v: '20180801' //The version of the API.
   };
@@ -45,18 +45,6 @@ class Map extends Component {
     }).then(response => response.json()).then(response => {
       setVenueState({venues: response.response.groups[0].items});
     });
-
-  /*fetch(venuesEndpoint + new URLSearchParams(params), {
-  method: 'GET'
-  }).then(response => {
-    //console.log(response)
-  });*/
-
-    /*fetch(venuesEndpoint + new URLSearchParams(params), {
-      method: 'GET'
-    }).then(response => response.json()).then(response => {
-      this.setState({venues: response.response.groups[0].items}); //Set the components state
-    });*/
   }
 
   componentWillReceiveProps({isScriptLoadSucceed}) {
@@ -73,18 +61,19 @@ class Map extends Component {
   }
 
   renderMarkers= (map) => {
-    const {locations, markers} = this.state
+    const {venues, markers} = this.state
     const infowindow = new window.google.maps.InfoWindow();
     const bounds = new window.google.maps.LatLngBounds();
 
-    for (let i = 0; i < locations.length; i++) {
-      const position = locations[i].location;
-      //position: {lat: locations[i].location.lat, lng: locations[i].location.lng},
+    for (let i = 0; i < venues.length; i++) {
+      //const position = venues[i].location;
+      const position = {lat: venues[i].location.lat, lng: venues[i].location.lng};
       // Create a marker per location, and put into markers array.
       const marker = new window.google.maps.Marker({
         position: position,
-        title: locations[i].title,
+        title: venues[i].name,
         map: map,
+        animation: window.google.maps.Animation.DROP,
         id: i
       })
 
@@ -92,9 +81,6 @@ class Map extends Component {
       markers.push(marker);
       this.setState({markers});
       console.log(markers);
-
-      /** Placeholder for foursquare response
-	  	//marker.foursquareData = null;	 */
 
       // Create an onclick event to open an infowindow at each marker.
       marker.addListener('click', () => {
@@ -107,16 +93,17 @@ class Map extends Component {
     map.fitBounds(bounds);
   }
 
-  populateInfoWindow = (marker, infowindow) => {
+   populateInfoWindow = (marker, infowindow) => {
     //const {markers} = this.state;
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker !== marker) {
-      marker.setAnimation(window.google.maps.Animation.BOUNCE);
+      infowindow.marker = marker;
+      marker.setAnimation(window.google.maps.Animation.BOUNCE);   //Animate the marker when clicked
 			setTimeout(function(){
 			  marker.setAnimation(null); 
 			}, 200);
-      infowindow.marker = marker;
       infowindow.setContent('<div>' + marker.title + '</div>');
+
       infowindow.open(this.map, marker);
       // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener('closeclick', () => {
@@ -142,7 +129,6 @@ class Map extends Component {
           infowindow.close();
         }
           that.populateInfoWindow(markers[index], infowindow)
-
       })
     }
   }
@@ -175,18 +161,17 @@ class Map extends Component {
   }
 
   render() {
+    const {venues, markers, query} = this.state;
 
-    const venueList = this.state.venues.map((item,i) =>
+    const venueList = venues.map((item,i) =>
       <Venue key={i} 
       name={item.venue.name}
       location={item.venue.location.address}/> //Create a new "name attribute"
     );
 
-    const {locations, markers, query} = this.state;
-
     let showingPlaces
     if (query) {
-      for (let i = 0; i < locations.length; i++) {
+      for (let i = 0; i < venues.length; i++) {
       const match = new RegExp(escapeRegExp(query), 'i')
       showingPlaces = markers.filter((marker) => match.test(marker.title));
 
@@ -203,7 +188,7 @@ class Map extends Component {
       }
     } 
   } else {
-    for (var i = 0; i < locations.length; i++) {
+    for (var i = 0; i < venues.length; i++) {
       showingPlaces = markers
         if(markers[i]){
           markers[i].setVisible(true)
@@ -221,8 +206,8 @@ class Map extends Component {
             />
             <ul className="listView">
               {showingPlaces.map((marker, i) =>(<li key={i}>{marker.title}</li>)
-                )}
-                {venueList}
+              )}
+              {venueList}
               </ul>
           </div>
           <div id="map" role="application" ref="map">
