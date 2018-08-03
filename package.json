@@ -1,9 +1,13 @@
 {
   "dependencies": {
+    "escape-string-regexp": "^1.0.5",
     "google-maps-react": "^2.0.2",
     "react": "^16.4.1",
     "react-async-script-loader": "^0.3.0",
-    "react-dom": "^16.4.1"
+    "react-dom": "^16.4.1",
+    "react-foursquare": "^1.0.3",
+    "react-native-foursquare-api": "0.0.4",
+    "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
     "react-scripts": "1.1.4"
