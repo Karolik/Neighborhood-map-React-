@@ -231,7 +231,8 @@ class Map extends Component {
             onChange={(event) => this.updateQuery(event.target.value)}
             />
             <ul className="listView">
-
+		{showingPlaces.map((marker, i) =>(<li key={i}>{marker.title}</li>)
+		)}
               {venueList}
               </ul>
           </div>
@@ -247,7 +248,3 @@ class Map extends Component {
 export default scriptLoader(
   [`https://maps.googleapis.com/maps/api/js?key=AIzaSyDs0VIWSmdG3BZnOiBxOWz4SVqQF0t7QmQ`]
 )(Map);
-
-
-/* {showingPlaces.map((marker, i) =>(<li key={i}>{marker.title}</li>)
-)} */
