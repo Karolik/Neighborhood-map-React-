@@ -23,7 +23,7 @@ class Map extends Component {
   }
 
   componentDidMount() {
-  this.getVenues();
+  //this.getVenues();
   }
 
   getVenues() {
@@ -44,7 +44,20 @@ class Map extends Component {
       method: 'GET'
     }).then(response => response.json()).then(response => {
       setVenueState({venues: response.response.groups[0].items});
+      console.log(this.state.venues);
     });
+
+  /*fetch(venuesEndpoint + new URLSearchParams(params), {
+  method: 'GET'
+  }).then(response => {
+    //console.log(response)
+  });*/
+
+    /*fetch(venuesEndpoint + new URLSearchParams(params), {
+      method: 'GET'
+    }).then(response => response.json()).then(response => {
+      this.setState({venues: response.response.groups[0].items}); //Set the components state
+    });*/
   }
 
   componentWillReceiveProps({isScriptLoadSucceed}) {
@@ -53,8 +66,16 @@ class Map extends Component {
       zoom: 16,
       center: {lat: 48.804546, lng: 2.127116},
       })
-      this.renderMarkers(map);
+      this.getVenues();
+      if(this.state.venues.length>1){
+        this.renderMarkers(map);
+        console.log(this.state.markers);
+      }
+      else{
+        console.log("Error, no markers found")
+      }
       this.displayInfo();
+      console.log(map);
     }
     //else 
       //this.props.onError()
@@ -67,11 +88,11 @@ class Map extends Component {
 
     for (let i = 0; i < venues.length; i++) {
       //const position = venues[i].location;
-      const position = {lat: venues[i].location.lat, lng: venues[i].location.lng};
+      const position = {lat: venues[i].venue.location.lat, lng: venues[i].venue.location.lng};
       // Create a marker per location, and put into markers array.
       const marker = new window.google.maps.Marker({
         position: position,
-        title: venues[i].name,
+        title: venues[i].venue.name,
         map: map,
         animation: window.google.maps.Animation.DROP,
         id: i
@@ -81,6 +102,9 @@ class Map extends Component {
       markers.push(marker);
       this.setState({markers});
       console.log(markers);
+
+      /** Placeholder for foursquare response
+	  	//marker.foursquareData = null;	 */
 
       // Create an onclick event to open an infowindow at each marker.
       marker.addListener('click', () => {
@@ -93,7 +117,7 @@ class Map extends Component {
     map.fitBounds(bounds);
   }
 
-   populateInfoWindow = (marker, infowindow) => {
+  populateInfoWindow = (marker, infowindow) => {
     //const {markers} = this.state;
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker !== marker) {
@@ -103,7 +127,8 @@ class Map extends Component {
 			  marker.setAnimation(null); 
 			}, 200);
       infowindow.setContent('<div>' + marker.title + '</div>');
-
+      console.log(typeof(marker))
+	    
       infowindow.open(this.map, marker);
       // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener('closeclick', () => {
@@ -165,8 +190,9 @@ class Map extends Component {
 
     const venueList = venues.map((item,i) =>
       <Venue key={i} 
-      name={item.venue.name}
-      location={item.venue.location.address}/> //Create a new "name attribute"
+      name={item.venue.name}  //Create a new "name attribute"
+      //location={item.venue.location.address}
+      />
     );
 
     let showingPlaces
@@ -188,7 +214,7 @@ class Map extends Component {
       }
     } 
   } else {
-    for (var i = 0; i < venues.length; i++) {
+    for (let i = 0; i < venues.length; i++) {
       showingPlaces = markers
         if(markers[i]){
           markers[i].setVisible(true)
@@ -205,8 +231,7 @@ class Map extends Component {
             onChange={(event) => this.updateQuery(event.target.value)}
             />
             <ul className="listView">
-              {showingPlaces.map((marker, i) =>(<li key={i}>{marker.title}</li>)
-              )}
+
               {venueList}
               </ul>
           </div>
@@ -222,3 +247,7 @@ class Map extends Component {
 export default scriptLoader(
   [`https://maps.googleapis.com/maps/api/js?key=AIzaSyDs0VIWSmdG3BZnOiBxOWz4SVqQF0t7QmQ`]
 )(Map);
+
+
+/* {showingPlaces.map((marker, i) =>(<li key={i}>{marker.title}</li>)
+)} */
