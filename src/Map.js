@@ -27,18 +27,18 @@ class Map extends Component {
   }
 
   getVenues() {
-  let setVenueState = this.setState.bind(this);
-  const venuesEndpoint = 'https://api.foursquare.com/v2/venues/explore?';
+    let setVenueState = this.setState.bind(this);
+    const venuesEndpoint = 'https://api.foursquare.com/v2/venues/explore?';
 
-  const params = {
-    client_id: 'NTYCPUV20MOOHIOHYXF3ZZ2A2EZVZ1RSHXKWFELIJBP5HNLC',
-    client_secret: '4SATNABB4YRB5CECKTU5V1OIBQH0QYKTMIWZ1C2FKUP5JDJG',
-    ll: '48.804546,2.127116', //The latitude and longitude of Notre Dame, Versailles
-    limit: 6, //The max number of venues to load
-    section: 'topPicks',//or 'sights'
-    //query: 'Pubs', //The type of venues we want to query 'Pubs'
-    v: '20180801' //The version of the API.
-  };
+    const params = {
+      client_id: 'NTYCPUV20MOOHIOHYXF3ZZ2A2EZVZ1RSHXKWFELIJBP5HNLC',
+      client_secret: '4SATNABB4YRB5CECKTU5V1OIBQH0QYKTMIWZ1C2FKUP5JDJG',
+      ll: '48.804546,2.127116', //The latitude and longitude of Notre Dame, Versailles
+      limit: 6, //The max number of venues to load
+      section: 'topPicks',//or 'sights'
+      //query: 'Pubs', //The type of venues we want to query 'Pubs'
+      v: '20180801' //The version of the API.
+    };
 
     fetch(venuesEndpoint + new URLSearchParams(params), {
       method: 'GET'
