@@ -5,7 +5,8 @@ export class Venue extends Component {
   
   render() {
     return (
-      <li>{this.props.name} {this.props.location}</li>
+      <li>{this.props.name} 
+      </li>
     )
   }
 }
