@@ -122,7 +122,7 @@ class Map extends Component {
     if(infowindow){
       infowindow.close();
       place.addEventListener('click', function(event){
-        const index = markers.findIndex(marker => (marker.title === event.target.innerHTML))
+        const index = markers.findIndex(marker => (marker.title === event.target.innerText))
         //Check if another infowindow is open and close it
         //... ???
         if(infowindow){
