@@ -6,7 +6,7 @@ import Map from './Map'
 function MapsApp(props) {
     return (
       <div className="app">
-        <h1 className="title"> Map of Notre Dame, Versailles </h1>
+        <h1 className="title"> Notre Dame, Versailles </h1>
         <Map google={props.google} />
       </div>
     )
