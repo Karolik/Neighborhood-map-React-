@@ -219,8 +219,8 @@ class MapContainer extends Component {
             onChange={(event) => this.updateQuery(event.target.value)}
             />
             <ul className="listView">
-          {/*showingPlaces.filter(m => m.getVisible()).map((m, i) =>
-                (<li key={i}>{m.title}</li>))*/}
+          {/*showingPlaces.map((marker, i) =>(<li key={i}>{marker.title}</li>)
+)})*/}
               {venueList}
               </ul>
           </div>
