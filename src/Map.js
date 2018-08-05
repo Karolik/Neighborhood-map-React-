@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-//import ReactDOM from 'react-dom'
 import scriptLoader from 'react-async-script-loader'
 import escapeRegExp from 'escape-string-regexp'
 import { Venue } from './Venue'
@@ -21,9 +20,11 @@ class MapContainer extends Component {
     //highlightedIcon: false
     venues: [],
     filteredVenues: [],
-    //selectedMarkerIndex: 0
+    error: null,
+    selectedMarkerIndex: 0
   }
 
+  /** Render venues from Foursquare API  */
   componentDidMount() {
     this.getVenues();
   }
@@ -44,24 +45,24 @@ class MapContainer extends Component {
 
     fetch(venuesEndpoint + new URLSearchParams(params), {
       method: 'GET'
-    }).then(response => response.json()).then(response => {
-      setVenueState({venues: response.response.groups[0].items});
+    }).then(response => {
+      if(response.ok){
+        return response.json()
+      } else {
+        throw new Error('Network response was not ok.')
+      }
+    })
+      .then(response => {
+        setVenueState({venues: response.response.groups[0].items})
+      })
+      .catch(e => {
+        console.log('There has been a problem with yur fetch operation:', e)
+        this.setState({error: e.toString()})
+      })
       console.log(this.state.venues);
-    });
-
-  /*fetch(venuesEndpoint + new URLSearchParams(params), {
-  method: 'GET'
-  }).then(response => {
-    //console.log(response)
-  });*/
-
-    /*fetch(venuesEndpoint + new URLSearchParams(params), {
-      method: 'GET'
-    }).then(response => response.json()).then(response => {
-      this.setState({venues: response.response.groups[0].items}); //Set the components state
-    });*/
   }
 
+  /** Render Google map and call methods */
   componentWillReceiveProps({isScriptLoadSucceed}) {
     if (isScriptLoadSucceed) {
       const map = new window.google.maps.Map(document.getElementById('map'), {
@@ -69,7 +70,7 @@ class MapContainer extends Component {
       center: {lat: 48.804546, lng: 2.127116},
       })
       this.getVenues();
-      this.renderMarkers(map);
+      //this.renderMarkers(map);
       if(this.state.venues.length>1){
         this.renderMarkers(map);
         console.log(this.state.markers);
@@ -80,9 +81,17 @@ class MapContainer extends Component {
       this.displayInfo();
       console.log(map);
     }
-    //else 
-      //this.props.onError()
+      else 
+        console.log('Map failed to load');
+       //this.props.onError()
   }
+
+   /*componentDidMount () {
+    const { isScriptLoadSucceed } = this.props
+    if (isScriptLoadSucceed) {
+      this.getVenues();
+    }
+  }*/
 
   renderMarkers= (map) => {
     const {venues, markers} = this.state
@@ -90,32 +99,28 @@ class MapContainer extends Component {
     const bounds = new window.google.maps.LatLngBounds();
 
     for (let i = 0; i < venues.length; i++) {
-      //const position = venues[i].location;
       const position = {lat: venues[i].venue.location.lat, lng: venues[i].venue.location.lng};
       // Create a marker per location, and put into markers array.
       const marker = new window.google.maps.Marker({
         position: position,
+        //title: venues[i].venue.name,
         title: venues[i].venue.name,
+        address: venues[i].venue.location.address,
+        category: venues[i].venue.categories[0].name,
         map: map,
         animation: window.google.maps.Animation.DROP,
         id: i
       })
-
       // Push the marker to our array of markers.
       markers.push(marker);
       this.setState({markers});
       console.log(markers);
-
-      /** Placeholder for foursquare response
-	  	//marker.foursquareData = null;	 */
-
       // Create an onclick event to open an infowindow at each marker.
       marker.addListener('click', () => {
         this.populateInfoWindow(marker, infowindow);
       });
       bounds.extend(markers[i].position);
     }
-
     // Extend the boundaries of the map for each marker
     map.fitBounds(bounds);
   }
@@ -129,9 +134,8 @@ class MapContainer extends Component {
 			setTimeout(function(){
 			  marker.setAnimation(null); 
 			}, 200);
-      infowindow.setContent('<div>' + marker.title + '</div>');
+      infowindow.setContent(`<h3>${marker.title}</h3><h4>${marker.category}</h4><div>${marker.address}</div>`);
       console.log(typeof(marker))
-
       infowindow.open(this.map, marker);
       // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener('closeclick', () => {
@@ -161,61 +165,20 @@ class MapContainer extends Component {
     }
   }
 
-  makeMarkerIcon = (markerColor) => {
-    const {google} = this.props
-    let markerImage = new window.google.maps.MarkerImage(
-      'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
-      '|40|_|%E2%80%A2',
-      new google.maps.Size(21, 34),
-      new google.maps.Point(0, 0),
-      new google.maps.Point(10, 34),
-      new google.maps.Size(21,34));
-    return markerImage;
-  }
-
   updateQuery = (query) => {
-    this.setState({ query: query.trim() })
+    this.setState({ query: query })
   }
 
-  clearQuery = () => {
-    this.setState({ query: '' })
-  }
-
-  // This function will loop through the listings and hide them all.
-  hideMarkers = (markers) => {
-    for (var i = 0; i < markers.length; i++) {
-      markers[i].setMap(null);
-    }
-  }
-
-  onclickLocation = () => {
-    const that = this
-    const {infowindow} = this.state
-
-    const displayInfowindow = (e) => {
-      const {markers} = this.state
-      const markerInd =
-        markers.findIndex(m => m.title.toLowerCase() === e.target.innerText.toLowerCase())
-      that.populateInfoWindow(markers[markerInd], infowindow)
-    }
-    document.querySelector('.listView').addEventListener('click', function (e) {
-      if (e.target && e.target.nodeName === "LI") {
-        displayInfowindow(e)
-      }
-    })
-  }
-
-  handleValueChange = (e) => {
+  /*handleValueChange = (e) => {
     this.setState({query: e.target.value})
-  }
+  }*/
 
   render() {
     const {venues, markers, query} = this.state;
 
     const venueList = venues.map((item,i) =>
       <Venue key={i} 
-      name={item.venue.name}  //Create a new "name attribute"
-      //location={item.venue.location.address}
+      name={item.venue.name}  //"name attribute"
       />
     );
 
@@ -251,6 +214,7 @@ class MapContainer extends Component {
         <div className="container">
           <div className="textBox">
             <input className="search" role="search" type='text'
+            aria-label="Input filter venues"
             value={query}
             onChange={(event) => this.updateQuery(event.target.value)}
             />
@@ -260,7 +224,7 @@ class MapContainer extends Component {
               {venueList}
               </ul>
           </div>
-          <div id="map" role="application" ref="map">
+          <div id="map" role="application" ref="map" aria-label="Google map with markers of venues">
             Loading Map...
           </div>
         </div>
