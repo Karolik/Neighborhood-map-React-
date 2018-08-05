@@ -5,7 +5,7 @@ import escapeRegExp from 'escape-string-regexp'
 import { Venue } from './Venue'
 
 
-class Map extends Component {
+class MapContainer extends Component {
 
   state = {
     /*locations: [
@@ -19,11 +19,13 @@ class Map extends Component {
     query: '',
     map: '',
     //highlightedIcon: false
-    venues: []
+    venues: [],
+    filteredVenues: [],
+    //selectedMarkerIndex: 0
   }
 
   componentDidMount() {
-  //this.getVenues();
+    this.getVenues();
   }
 
   getVenues() {
@@ -67,6 +69,7 @@ class Map extends Component {
       center: {lat: 48.804546, lng: 2.127116},
       })
       this.getVenues();
+      this.renderMarkers(map);
       if(this.state.venues.length>1){
         this.renderMarkers(map);
         console.log(this.state.markers);
@@ -128,7 +131,7 @@ class Map extends Component {
 			}, 200);
       infowindow.setContent('<div>' + marker.title + '</div>');
       console.log(typeof(marker))
-	    
+
       infowindow.open(this.map, marker);
       // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener('closeclick', () => {
@@ -185,6 +188,27 @@ class Map extends Component {
     }
   }
 
+  onclickLocation = () => {
+    const that = this
+    const {infowindow} = this.state
+
+    const displayInfowindow = (e) => {
+      const {markers} = this.state
+      const markerInd =
+        markers.findIndex(m => m.title.toLowerCase() === e.target.innerText.toLowerCase())
+      that.populateInfoWindow(markers[markerInd], infowindow)
+    }
+    document.querySelector('.listView').addEventListener('click', function (e) {
+      if (e.target && e.target.nodeName === "LI") {
+        displayInfowindow(e)
+      }
+    })
+  }
+
+  handleValueChange = (e) => {
+    this.setState({query: e.target.value})
+  }
+
   render() {
     const {venues, markers, query} = this.state;
 
@@ -231,8 +255,8 @@ class Map extends Component {
             onChange={(event) => this.updateQuery(event.target.value)}
             />
             <ul className="listView">
-		{showingPlaces.map((marker, i) =>(<li key={i}>{marker.title}</li>)
-		)}
+          {/*showingPlaces.filter(m => m.getVisible()).map((m, i) =>
+                (<li key={i}>{m.title}</li>))*/}
               {venueList}
               </ul>
           </div>
@@ -247,4 +271,4 @@ class Map extends Component {
 
 export default scriptLoader(
   [`https://maps.googleapis.com/maps/api/js?key=AIzaSyDs0VIWSmdG3BZnOiBxOWz4SVqQF0t7QmQ`]
-)(Map);
+)(MapContainer);
