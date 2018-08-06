@@ -5,13 +5,6 @@ import escapeRegExp from 'escape-string-regexp'
 import ListView from './ListView'
 import Search from './Search'
 
-window.gm_authFailure = () => {
-  const mapContainer = document.querySelector('.container');
-  mapContainer.innerHTML = '';
-  mapContainer.innerHTML = `<div class='error'><h2 class='errorTitle'>
-  <span class='red-brackets'>{</span> ERROR <span class='red-brackets'>}</span></h2>
-  <p>Google Maps failed to load properly.Check your browser console for more informations.<p></div>`;
-}
 
 class MapContainer extends Component {
 
@@ -181,28 +174,6 @@ class MapContainer extends Component {
       })
     }
   }
-
-  /*filterVenues = (query) => {
-    const { venues } = this.state
-
-    let foundVenues
-    if (query) {
-      const match = new RegExp(escapeRegExp(query), 'i')
-      foundVenues = venues.filter((venue) => match.test(venue.name))
-    } else {
-      foundVenues = venues
-    }
-    //console.log(this.markers)
-    this.setState({ foundVenues, query })
-  }
-
-  updateQuery = (query) => {
-    this.setState({ query: query })
-  }
-
-  handleValueChange = (e) => {
-    this.setState({query: e.target.value})
-  }*/
 
 //Search venues by their name
   searchVenues = (query) => {
