@@ -1,8 +1,17 @@
 import React, {Component} from 'react'
 import scriptLoader from 'react-async-script-loader'
 import escapeRegExp from 'escape-string-regexp'
-import { Venue } from './Venue'
+//import { Venue } from './Venue'
+import ListView from './ListView'
+import Search from './Search'
 
+window.gm_authFailure = () => {
+  const mapContainer = document.querySelector('.container');
+  mapContainer.innerHTML = '';
+  mapContainer.innerHTML = `<div class='error'><h2 class='errorTitle'>
+  <span class='red-brackets'>{</span> ERROR <span class='red-brackets'>}</span></h2>
+  <p>Google Maps failed to load properly.Check your browser console for more informations.<p></div>`;
+}
 
 class MapContainer extends Component {
 
@@ -17,11 +26,10 @@ class MapContainer extends Component {
     markers: [],
     query: '',
     map: '',
-    //highlightedIcon: false
     venues: [],
-    filteredVenues: [],
+    foundVenues: [],
     error: null,
-    selectedMarkerIndex: 0
+    toggled: false
   }
 
   /** Render venues from Foursquare API  */
@@ -39,7 +47,7 @@ class MapContainer extends Component {
       ll: '48.804546,2.127116', //The latitude and longitude of Notre Dame, Versailles
       limit: 6, //The max number of venues to load
       section: 'topPicks',//or 'sights'
-      //query: 'Pubs', //The type of venues we want to query 'Pubs'
+      //query: 'Pubs',
       v: '20180801' //The version of the API.
     };
 
@@ -58,6 +66,12 @@ class MapContainer extends Component {
       .catch(e => {
         console.log('There has been a problem with yur fetch operation:', e)
         this.setState({error: e.toString()})
+        const mapContainer = document.querySelector('.container');
+        mapContainer.innerHTML = `<div class='error'><h2 class='errorTitle'>
+        <span class='red-brackets'>{</span> ERROR <span class='red-brackets'>}</span></h2>
+        <p>Foursquare API failed to fetch properly data from the web.
+        Check your browser console for more informations.
+        You can also try to refresh the page.<p></div>`;
       })
       console.log(this.state.venues);
   }
@@ -117,6 +131,9 @@ class MapContainer extends Component {
       console.log(markers);
       // Create an onclick event to open an infowindow at each marker.
       marker.addListener('click', () => {
+        if (infowindow) {
+          infowindow.close()
+      }
         this.populateInfoWindow(marker, infowindow);
       });
       bounds.extend(markers[i].position);
@@ -165,70 +182,77 @@ class MapContainer extends Component {
     }
   }
 
+  /*filterVenues = (query) => {
+    const { venues } = this.state
+
+    let foundVenues
+    if (query) {
+      const match = new RegExp(escapeRegExp(query), 'i')
+      foundVenues = venues.filter((venue) => match.test(venue.name))
+    } else {
+      foundVenues = venues
+    }
+    //console.log(this.markers)
+    this.setState({ foundVenues, query })
+  }
+
   updateQuery = (query) => {
     this.setState({ query: query })
   }
 
-  /*handleValueChange = (e) => {
+  handleValueChange = (e) => {
     this.setState({query: e.target.value})
   }*/
 
-  render() {
-    const {venues, markers, query} = this.state;
+//Search venues by their name
+  searchVenues = (query) => {
+    this.setState({ query })
+    const {venues, markers} = this.state;
 
-    const venueList = venues.map((item,i) =>
-      <Venue key={i} 
-      name={item.venue.name}  //"name attribute"
-      />
-    );
-
-    let showingPlaces
     if (query) {
-      for (let i = 0; i < venues.length; i++) {
-      const match = new RegExp(escapeRegExp(query), 'i')
-      showingPlaces = markers.filter((marker) => match.test(marker.title));
-
-      if(markers[i].title.toLowerCase().includes(query.toLowerCase())){
-        markers[i].setVisible(true)
-      }
-      else {
-        markers[i].setVisible(false)
-      
-        //if (infowindow.marker === markers[i]) {
-          // close the info window if marker removed
-          //infowindow.close()
-        //}
-      }
-    } 
-  } else {
-    for (let i = 0; i < venues.length; i++) {
-      showingPlaces = markers
-        if(markers[i]){
+      venues.forEach((v, i) => {
+        if (v.venue.name.toLowerCase().includes(query.toLowerCase())) {
           markers[i].setVisible(true)
+        } else {
+          //if (infowindow.marker === markers[i]) {
+            // close the info window if marker removed
+            //infowindow.close()
+          //}
+          markers[i].setVisible(false)
         }
-      }
+      })
+    } else {
+        venues.forEach((v, i) => {
+          if (markers.length && markers[i]) {
+            markers[i].setVisible(true)
+          }
+        })
     }
+  }
 
+  render() {
     return(
-      <div>
         <div className="container">
           <div className="textBox">
-            <input className="search" role="search" type='text'
-            aria-label="Input filter venues"
-            value={query}
-            onChange={(event) => this.updateQuery(event.target.value)}
-            />
-            <ul className="listView">
-          {/*showingPlaces.map((marker, i) =>(<li key={i}>{marker.title}</li>)
-)})*/}
-              {venueList}
-              </ul>
+            <aside className={ this.state.toggled === true ? 'map-tools' : 'map-tools toggle' }>
+              <Search 
+              markers = {this.state.markers}
+              venues = {this.state.venues}
+              query = {this.state.query}
+              searchVenues = {this.searchVenues}
+              />
+              <ListView 
+              markers = {this.state.markers}
+              onClick = {this.displayInfo}
+              />
+            </aside>
           </div>
+          <section className="map">
           <div id="map" role="application" ref="map" aria-label="Google map with markers of venues">
             Loading Map...
           </div>
+          </section>
         </div>
-      </div>
     )
   }
 }
