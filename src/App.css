@@ -1,41 +1,19 @@
-.App {
+.app {
+  background: #646363;
   text-align: center;
 }
 
-.app {
-  background: #646363;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
-
-.App-header {
+/** Header */
+.app-header {
+  display: flex;
+  justify-content: space-between;
   background-color: #646363;
-  height: 150px;
-  padding: 20px;
   color: white;
-}
-
-.App-title {
-  font-size: 1.5em;
-}
-
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.header {
-  /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);*/
+  height: 110px;
   min-height: 56px;
   transition: min-height 0.3s;
   width: 100%;
+  padding: 20px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -45,24 +23,20 @@
   display: none;
 }
 
-/*.header_menu svg {
-  display: none;
-}*/
-
-
-
-
-.title {
+header .title {
   text-align: center;
+  vertical-align: bottom;
   background: #646363;
   color: #ebebeb;
   /*font-family: Helvetica, sans-serif, Arial;*/
   font-weight: 300;
   font-size: 2em;
-  margin: 0.5em 0.25em;
+  margin: 1em 0.25em;
   display: inline-block;
+  align-self: center;
 }
 
+/** The middle of the page. */
 .main {
   display: flex;
   flex-wrap: wrap;
@@ -84,7 +58,8 @@
   width: 100%;
 }
 
-.textBox{
+/** List of venues on the side. */
+.sideBox {
   height: 100vh;
   width: 20%;
   background: #646363;
@@ -100,54 +75,71 @@
   width: 100%;
 }
 
-.textBox ul {
+.sideBox ul {
   list-style-type: none;
   margin-left: 0;
   padding-left: 0;
 }
 
-.textBox li {
+.sideBox li {
   width: 100%;
   border: 1px solid #999;
   padding: 6px 2px;
   line-height: 1.6em;
 }
 
+.error {
+  text-align: center;
+  font-size: 1.5em;
+  color: #e64670;
+}
+
+/** For small screens display hamburger menu and hide the list from the view by default. */
 @media screen and (max-width: 549px) {
   /**Hamburger menu on the top*/
-  .header_menu {
+  .header-menu {
     width: 45px;
     display: inline-block;
-    position: relative;
-    right: 0;
+    position: absolute;
+    left: 0;
     padding: 1em;
-    margin-left: 20px;
     cursor: pointer;
   }
-  .header_menu svg {
+
+  .header-menu svg {
     width: 32px;
-    fill: #E0E0E0;
+    fill: #e0e0e0;
   }
-  .textBox {
+
+  header .title {
+    font-weight: 350;
+    font-size: 1.5em;
+    margin-left: 2em;
+  }
+
+  .sideBox {
     z-index: 10;
-    background-color: #fff;
+    background-color: #646363;
     width: 300px;
     position: absolute;
     /* This trasform moves the drawer off canvas. */
     -webkit-transform: translate(-300px, 0);
     transform: translate(-300px, 0);
-    /* Optionally, we animate the drawer. */
+    /* Animate the drawer. */
     transition: transform 0.3s ease;
   }
-  .textBox.open {
+
+  .sideBox.open {
     -webkit-transform: translate(0, 0);
     transform: translate(0, 0);
   }
+
   .map {
     width: 100%;
   }
 }
 
+/** For bigger screens hide the hamburger menu. */
 @media screen and (min-width: 549px) {
   .header_menu svg {
     display: none;
