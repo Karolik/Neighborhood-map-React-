@@ -2,13 +2,17 @@
   text-align: center;
 }
 
+.app {
+  background: #646363;
+}
+
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 80px;
 }
 
 .App-header {
-  background-color: #222;
+  background-color: #646363;
   height: 150px;
   padding: 20px;
   color: white;
@@ -27,16 +31,41 @@
   to { transform: rotate(360deg); }
 }
 
-.app {
-  background: #646363;
-  color: #ebebeb;
+.header {
+  /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);*/
+  min-height: 56px;
+  transition: min-height 0.3s;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
+
+/**Hamburger menu on the top*/
+.header-menu {
+  display: none;
+}
+
+/*.header_menu svg {
+  display: none;
+}*/
+
+
+
 
 .title {
   text-align: center;
   background: #646363;
   color: #ebebeb;
-  font-family: Helvetica, sans-serif, Arial;
+  /*font-family: Helvetica, sans-serif, Arial;*/
+  font-weight: 300;
+  font-size: 2em;
+  margin: 0.5em 0.25em;
+  display: inline-block;
+}
+
+.main {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .container {
@@ -44,14 +73,20 @@
   flex-wrap: wrap;
 }
 
+.map {
+  height: 100vh;
+  width: 80%;
+  /*position: relative;*/
+}
+
 #map {
   height: 100vh;
-  width: 85%;
+  width: 100%;
 }
 
 .textBox{
   height: 100vh;
-  width: 15%;
+  width: 20%;
   background: #646363;
   color: #ebebeb;
   border: 1px solid #999;
@@ -74,6 +109,47 @@
 .textBox li {
   width: 100%;
   border: 1px solid #999;
-  padding: 6px 0;
+  padding: 6px 2px;
   line-height: 1.6em;
+}
+
+@media screen and (max-width: 549px) {
+  /**Hamburger menu on the top*/
+  .header_menu {
+    width: 45px;
+    display: inline-block;
+    position: relative;
+    right: 0;
+    padding: 1em;
+    margin-left: 20px;
+    cursor: pointer;
+  }
+  .header_menu svg {
+    width: 32px;
+    fill: #E0E0E0;
+  }
+  .textBox {
+    z-index: 10;
+    background-color: #fff;
+    width: 300px;
+    position: absolute;
+    /* This trasform moves the drawer off canvas. */
+    -webkit-transform: translate(-300px, 0);
+    transform: translate(-300px, 0);
+    /* Optionally, we animate the drawer. */
+    transition: transform 0.3s ease;
+  }
+  .textBox.open {
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
+  }
+  .map {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 549px) {
+  .header_menu svg {
+    display: none;
+  }
 }
