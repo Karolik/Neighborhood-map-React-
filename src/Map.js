@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import scriptLoader from 'react-async-script-loader'
-import escapeRegExp from 'escape-string-regexp'
 //import { Venue } from './Venue'
 import ListView from './ListView'
 import Search from './Search'
@@ -9,20 +8,12 @@ import Search from './Search'
 class MapContainer extends Component {
 
   state = {
-    /*locations: [
-      {title: 'Versailles Palace', location: {lat: 48.804865, lng: 2.120355}},
-      {title: 'Church of Notre-Dame', location: {lat: 48.807542, lng: 2.128779}},
-      {title: 'Notre Dame Market', location: {lat: 48.806546, lng: 2.132030}},
-      {title: 'Italian Restaurant', location: {lat: 48.807963, lng: 2.131558}},
-      {title: 'Cinema Cyrano', location: {lat: 48.808210, lng: 2.131097}}
-    ],*/
     markers: [],
     query: '',
     map: '',
     venues: [],
     foundVenues: [],
-    error: null,
-    toggled: false
+    error: null
   }
 
   /** Render venues from Foursquare API  */
@@ -40,7 +31,6 @@ class MapContainer extends Component {
       ll: '48.804546,2.127116', //The latitude and longitude of Notre Dame, Versailles
       limit: 6, //The max number of venues to load
       section: 'topPicks',//or 'sights'
-      //query: 'Pubs',
       v: '20180801' //The version of the API.
     };
 
@@ -60,11 +50,8 @@ class MapContainer extends Component {
         console.log('There has been a problem with yur fetch operation:', e)
         this.setState({error: e.toString()})
         const mapContainer = document.querySelector('.container');
-        mapContainer.innerHTML = `<div class='error'><h2 class='errorTitle'>
-        <span class='red-brackets'>{</span> ERROR <span class='red-brackets'>}</span></h2>
-        <p>Foursquare API failed to fetch properly data from the web.
-        Check your browser console for more informations.
-        You can also try to refresh the page.<p></div>`;
+        mapContainer.innerHTML = `<div class='error'><h2>ERROR</h2>
+        <p>Foursquare API failed to fetch the data. Please try to refresh the page.<p></div>`;
       })
       console.log(this.state.venues);
   }
@@ -77,29 +64,30 @@ class MapContainer extends Component {
       center: {lat: 48.804546, lng: 2.127116},
       })
       this.getVenues();
-      //this.renderMarkers(map);
       if(this.state.venues.length>1){
         this.renderMarkers(map);
         console.log(this.state.markers);
+        this.displayInfo();
+        this.toggleVenueList();
       }
       else{
         console.log("Error, no markers found")
+        const mapContainer = document.querySelector('.container');
+        mapContainer.innerHTML = `<div class='error'><h2>UPS ERROR</h2>
+        <p>No markers were found. The Foursquare API failed to fetch the data. Please try to refresh the page.</p></div>`;
       }
-      this.displayInfo();
       console.log(map);
-    }
-      else 
-        console.log('Map failed to load');
-       //this.props.onError()
+    } else {
+      console.log('Map failed to load');
+      const mapContainer = document.querySelector('.container');
+      mapContainer.innerHTML = `<div class='error'><h2>UPS ERROR</h2>
+      <p>Google Maps API failed to load.
+      Try to refresh the page and check your browser console for more informations.<p></div>`;
+      //this.props.onError()
+    }    
   }
 
-   /*componentDidMount () {
-    const { isScriptLoadSucceed } = this.props
-    if (isScriptLoadSucceed) {
-      this.getVenues();
-    }
-  }*/
-
+  /** Create and render markers of the venues. */
   renderMarkers= (map) => {
     const {venues, markers} = this.state
     const infowindow = new window.google.maps.InfoWindow();
@@ -110,13 +98,13 @@ class MapContainer extends Component {
       // Create a marker per location, and put into markers array.
       const marker = new window.google.maps.Marker({
         position: position,
-        //title: venues[i].venue.name,
         title: venues[i].venue.name,
         address: venues[i].venue.location.address,
         category: venues[i].venue.categories[0].name,
         map: map,
         animation: window.google.maps.Animation.DROP,
-        id: i
+        id: i,
+        tabIndex: "0"
       })
       // Push the marker to our array of markers.
       markers.push(marker);
@@ -124,9 +112,6 @@ class MapContainer extends Component {
       console.log(markers);
       // Create an onclick event to open an infowindow at each marker.
       marker.addListener('click', () => {
-        if (infowindow) {
-          infowindow.close()
-      }
         this.populateInfoWindow(marker, infowindow);
       });
       bounds.extend(markers[i].position);
@@ -135,8 +120,8 @@ class MapContainer extends Component {
     map.fitBounds(bounds);
   }
 
+  /** Create an infowindow, and open it when  */
   populateInfoWindow = (marker, infowindow) => {
-    //const {markers} = this.state;
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker !== marker) {
       infowindow.marker = marker;
@@ -144,8 +129,7 @@ class MapContainer extends Component {
 			setTimeout(function(){
 			  marker.setAnimation(null); 
 			}, 200);
-      infowindow.setContent(`<h3>${marker.title}</h3><h4>${marker.category}</h4><div>${marker.address}</div>`);
-      console.log(typeof(marker))
+      infowindow.setContent(`<a tabIndex="0" aria-label="Infowindow for marker"><h3>${marker.title}</h3><h4>${marker.category}</h4><div>${marker.address}</div></a>`);
       infowindow.open(this.map, marker);
       // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener('closeclick', () => {
@@ -154,19 +138,17 @@ class MapContainer extends Component {
     }
   }
 
-  //When clicked on a place on the list, display an infowindow
+  // When clicked on a place on the list, display an infowindow
   displayInfo = () => {
     const {markers} = this.state
     const infowindow = new window.google.maps.InfoWindow();
     const that = this
-    const place = document.querySelector(".listView")
+    const place = document.querySelector('.listView')
   
     if(infowindow){
       infowindow.close();
       place.addEventListener('click', function(event){
         const index = markers.findIndex(marker => (marker.title === event.target.innerText))
-        //Check if another infowindow is open and close it
-        //... ???
         if(infowindow){
           infowindow.close();
         }
@@ -175,7 +157,7 @@ class MapContainer extends Component {
     }
   }
 
-//Search venues by their name
+/** Search venues by their name. */
   searchVenues = (query) => {
     this.setState({ query })
     const {venues, markers} = this.state;
@@ -185,11 +167,7 @@ class MapContainer extends Component {
         if (v.venue.name.toLowerCase().includes(query.toLowerCase())) {
           markers[i].setVisible(true)
         } else {
-          //if (infowindow.marker === markers[i]) {
-            // close the info window if marker removed
-            //infowindow.close()
-          //}
-          markers[i].setVisible(false)
+            markers[i].setVisible(false)
         }
       })
     } else {
@@ -201,23 +179,36 @@ class MapContainer extends Component {
     }
   }
 
+  /**  Open the list when the menu icon is clicked. */
+  toggleVenueList = () => {
+    const menu = document.querySelector('#menu');
+    const mapArea = document.querySelector('.map');
+    const venueList = document.querySelector('.sideBox');
+    
+    menu.addEventListener('click', function(e) {
+      venueList.classList.toggle('open');
+      e.stopPropagation();
+    });
+    mapArea.addEventListener('click', function() {
+      venueList.classList.remove('open');
+    });
+  }
+
   render() {
     return(
         <div className="container">
-          <div className="textBox">
-            <aside className={ this.state.toggled === true ? 'map-tools' : 'map-tools toggle' }>
-              <Search 
-              markers = {this.state.markers}
-              venues = {this.state.venues}
-              query = {this.state.query}
-              searchVenues = {this.searchVenues}
-              />
-              <ListView 
-              markers = {this.state.markers}
-              onClick = {this.displayInfo}
-              />
-            </aside>
-          </div>
+          <aside className="sideBox">
+            <Search 
+            markers = {this.state.markers}
+            venues = {this.state.venues}
+            query = {this.state.query}
+            searchVenues = {this.searchVenues}
+            />
+            <ListView 
+            markers = {this.state.markers}
+            onClick = {this.displayInfo}
+            />
+          </aside>
           <section className="map">
           <div id="map" role="application" ref="map" aria-label="Google map with markers of venues">
             Loading Map...
