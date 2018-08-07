@@ -87,6 +87,28 @@ header .title {
   padding: 6px 2px;
   line-height: 1.6em;
 }
+.sideBox button{
+  background: #646363;
+  color: #ebebeb;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: default;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.8em;
+  /*align-items: flex-start;
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    margin: 0em;
+    font: 400 13.3333px Arial;*/
+}
 
 .error {
   text-align: center;
@@ -123,11 +145,11 @@ header .title {
   .sideBox {
     z-index: 10;
     background-color: #646363;
-    width: 300px;
+    width: 250px;
     position: absolute;
     /* This trasform moves the drawer off canvas. */
-    -webkit-transform: translate(-300px, 0);
-    transform: translate(-300px, 0);
+    -webkit-transform: translate(-250px, 0);
+    transform: translate(-250px, 0);
     /* Animate the drawer. */
     transition: transform 0.3s ease;
   }
