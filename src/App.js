@@ -7,11 +7,11 @@ function MapsApp(props) {
   return (
     <div className="app">
       <header className="app-header" >
-        <a id="menu" className="header-menu" tabIndex="0">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" tabIndex="0">
+        <button id="menu" className="header-menu" tabIndex="0" onClick={props.toggleVenueList}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
           </svg>
-        </a>
+        </button>
         <h1 className="title"> Notre Dame, Versailles </h1>
       </header>
       <main>
