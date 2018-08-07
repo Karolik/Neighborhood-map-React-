@@ -12,7 +12,7 @@ class MapContainer extends Component {
     query: '',
     map: '',
     venues: [],
-    foundVenues: [],
+    //foundVenues: [],
     error: null
   }
 
@@ -104,6 +104,7 @@ class MapContainer extends Component {
         map: map,
         animation: window.google.maps.Animation.DROP,
         id: i,
+        gestureHandling: 'cooperative',
         tabIndex: "0"
       })
       // Push the marker to our array of markers.
@@ -138,7 +139,7 @@ class MapContainer extends Component {
     }
   }
 
-  // When clicked on a place on the list, display an infowindow
+  /** When clicked on a place on the list, display an infowindow. */
   displayInfo = () => {
     const {markers} = this.state
     const infowindow = new window.google.maps.InfoWindow();
@@ -161,6 +162,7 @@ class MapContainer extends Component {
   searchVenues = (query) => {
     this.setState({ query })
     const {venues, markers} = this.state;
+    const infowindow = new window.google.maps.InfoWindow();
 
     if (query) {
       venues.forEach((v, i) => {
@@ -168,6 +170,7 @@ class MapContainer extends Component {
           markers[i].setVisible(true)
         } else {
             markers[i].setVisible(false)
+            //infowindow.setMarker = null
         }
       })
     } else {
@@ -194,6 +197,13 @@ class MapContainer extends Component {
     });
   }
 
+  /*
+  clickVenueList = () => {
+    this.state.venues.forEach((e, venue) => {
+      this.LocationClicked(venue)
+    }) 
+  }*/
+
   render() {
     return(
         <div className="container">
@@ -206,6 +216,7 @@ class MapContainer extends Component {
             />
             <ListView 
             markers = {this.state.markers}
+            venues = {this.state.venues}
             onClick = {this.displayInfo}
             />
           </aside>
