@@ -104,6 +104,9 @@ header .title {
     left: 0;
     padding: 1em;
     cursor: pointer;
+    color: #646363;
+    border: none;
+    background: none;
   }
 
   .header-menu svg {
