@@ -1,7 +1,3 @@
-Hi Neil! 
-If you come here to see my code, this is my e-mail: 
-karolina.gauvain@gmail.com
-
 # Neighborhood Map
 ===============================
 
