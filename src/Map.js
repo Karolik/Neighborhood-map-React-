@@ -26,8 +26,8 @@ class MapContainer extends Component {
     const venuesEndpoint = 'https://api.foursquare.com/v2/venues/explore?';
 
     const params = {
-      client_id: 'NTYCPUV20MOOHIOHYXF3ZZ2A2EZVZ1RSHXKWFELIJBP5HNLC',
-      client_secret: '4SATNABB4YRB5CECKTU5V1OIBQH0QYKTMIWZ1C2FKUP5JDJG',
+      client_id: '*****',
+      client_secret: '*****',
       ll: '48.804546,2.127116', //The latitude and longitude of Notre Dame, Versailles
       limit: 6, //The max number of venues to load
       section: 'topPicks',//or 'sights'
