@@ -231,5 +231,5 @@ class MapContainer extends Component {
 }
 
 export default scriptLoader(
-  [`https://maps.googleapis.com/maps/api/js?key=AIzaSyDs0VIWSmdG3BZnOiBxOWz4SVqQF0t7QmQ`]
+  [`https://maps.googleapis.com/maps/api/js?key=***********************`]
 )(MapContainer);
